@@ -1,0 +1,102 @@
+import random
+
+# Sample user database (just a dictionary for simplicity)
+users = {
+    "user1": {
+        "password": "password123",
+        "balance": 1000,
+        "cashback_balance": 0,
+    }
+}
+
+# Cashback rate (5% cashback on every transaction)
+CASHBACK_RATE = 0.05
+
+# Function to register a user
+def register(username, password):
+    if username in users:
+        print(f"Username {username} already exists.")
+    else:
+        users[username] = {
+            "password": password,
+            "balance": 0,
+            "cashback_balance": 0,
+        }
+        print(f"User {username} registered successfully!")
+
+# Function to login a user
+def login(username, password):
+    if username in users and users[username]["password"] == password:
+        print(f"Login successful for {username}!")
+        return username
+    else:
+        print("Invalid username or password.")
+        return None
+
+# Function to make a transaction
+def make_transaction(username, amount):
+    user = users.get(username)
+    if not user:
+        print("User not found.")
+        return
+
+    if amount > user["balance"]:
+        print("Insufficient balance.")
+        return
+
+    # Deduct the amount from the user's balance
+    user["balance"] -= amount
+    cashback = amount * CASHBACK_RATE
+
+    # Add cashback to the user's cashback balance
+    user["cashback_balance"] += cashback
+
+    print(f"Transaction of {amount} completed. You earned a cashback of {cashback:.2f}!")
+    print(f"Remaining balance: {user['balance']}")
+    print(f"Cashback balance: {user['cashback_balance']:.2f}")
+
+# Function to view the user's balance and cashback balance
+def view_balance(username):
+    user = users.get(username)
+    if user:
+        print(f"Balance: {user['balance']}")
+        print(f"Cashback Balance: {user['cashback_balance']:.2f}")
+    else:
+        print("User not found.")
+
+# Main function to simulate the app's workflow
+def main():
+    while True:
+        print("\n1. Register\n2. Login\n3. Make a Transaction\n4. View Balance\n5. Exit")
+        choice = input("Enter choice: ")
+
+        if choice == '1':
+            username = input("Enter username: ")
+            password = input("Enter password: ")
+            register(username, password)
+        elif choice == '2':
+            username = input("Enter username: ")
+            password = input("Enter password: ")
+            current_user = login(username, password)
+            if current_user:
+                print(f"Welcome {current_user}!")
+        elif choice == '3':
+            if current_user:
+                amount = float(input("Enter transaction amount: "))
+                make_transaction(current_user, amount)
+            else:
+                print("Please login first.")
+        elif choice == '4':
+            if current_user:
+                view_balance(current_user)
+            else:
+                print("Please login first.")
+        elif choice == '5':
+            print("Exiting the app...")
+            break
+        else:
+            print("Invalid choice.")
+
+# Run the app
+if __name__ == "__main__":
+    main()
